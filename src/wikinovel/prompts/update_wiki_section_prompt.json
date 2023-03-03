@@ -1,0 +1,11 @@
+{
+    "input_variables": [
+        "section",
+        "info"
+    ],
+    "output_parser": null,
+    "template": "You are an AI assistant helping a human to update a Wikipedia page. Update the text of the given Wikipedia section to include the provided new information.\n\n==========\nPrevious text of the section:\n{section}\n==========\nNew information:\n{info}\n==========\nUpdated text of the section:\n",
+    "template_format": "f-string",
+    "validate_template": true,
+    "_type": "prompt"
+}

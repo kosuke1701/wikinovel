@@ -111,3 +111,14 @@ def load_select_wiki_section_chain(
     )
 
     return chain
+
+def load_update_wiki_section_chain(
+    llm=None,
+    prompt_fn=DEFAULT_ROOT_DIR + "prompts/update_wiki_section_prompt.json"
+):
+    if llm is None:
+        llm = OpenAI(max_tokens=1024)
+    prompt = load_prompt(prompt_fn)
+    chain = LLMChain(prompt=prompt, llm=llm)
+
+    return chain
