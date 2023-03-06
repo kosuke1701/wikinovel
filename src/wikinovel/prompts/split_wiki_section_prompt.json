@@ -1,0 +1,13 @@
+{
+    "input_variables": [
+        "entity",
+        "index",
+        "info"
+    ],
+    "output_parser": null,
+    "partial_variables": {},
+    "template": "You are an AI assistant helping a human to edit a Wikipedia page. Given a content of a section of a Wikipedia page, split the content of the section into multiple parts so that each of the parts become subsection of the section. Ensure that all information is contained in one of the parts. For each part, you also have to output its title. When deciding the title, ensure that the title is consistent with the context of the hierarchical position of the given section.\n\n==========\nEntity name:\n\u30ed\u30f3\u30f4\u30a1\u30eb\n\nSection Position:\n2. Economy\n2.3 Industry\n\nSection Content:\nA metropolis called Tetra (\u30c6\u30c8\u30e9) is located between two long mountain ranges in the Central Continent of Ronval (\u30ed\u30f3\u30f4\u30a1\u30eb), and there are many spacecraft assembly plants. These plants use Neo-thorium (\u30cd\u30aa\u30fb\u30c8\u30ea\u30a6\u30e0) mined in the Northern Archipelago.\n==========\nOutput:\nPart 1: There are many spacecraft assembly plants in Tetra (\u30c6\u30c8\u30e9), which is located between two long mountain ranges in the Central Continent of Ronval (\u30ed\u30f3\u30f4\u30a1\u30eb).\nTitle 1: Spacecraft Assembly\n\nPart 2: There are mines of Neo-thorium (\u30cd\u30aa\u30fb\u30c8\u30ea\u30a6\u30e0) in the Northern Archipelago.\nTitle 2: Mining\n\n==========\nEntity name:\n\u30a8\u30d5\u30a7\u30c8\u30b9\n\nSection Position:\n\nSection Content:\nEphotes (\u30a8\u30d5\u30a7\u30c8\u30b9) is a rocky planet roughly the same size as Earth, with oceans and vegetation on its surface. It was discovered between Earth and Mars a few decades ago. Unknown intelligent life forms exist on Ephotes and have a culture distinct from humans.\n==========\nOutput:\nPart 1: Ephotes (\u30a8\u30d5\u30a7\u30c8\u30b9) is a rocky planet roughly the same size as Earth, with oceans and vegetation on its surface.\nTitle 1: Physical Characteristics\n\nPart 2: Ephotes was discovered between Earth and Mars a few decades ago.\nTitle 2: History\n\nPart 3: Unknown intelligent life forms exist on Ephotes and have a culture distinct from humans.\nTitle 3: Life\n\n==========\nEntity name:\n{entity}\n\nSection Position:\n{index}\n\nSection Content:\n{info}\n==========\nOutput:",
+    "template_format": "f-string",
+    "validate_template": true,
+    "_type": "prompt"
+}

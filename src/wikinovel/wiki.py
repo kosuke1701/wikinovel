@@ -62,6 +62,9 @@ def load_select_wiki_section_chain(
     llm=None,
     prompt_fn=DEFAULT_ROOT_DIR + "prompts/select_wiki_section_prompt.json"
 ):
+    """
+    entity, index, info -> sections
+    """
     if llm is None:
         llm = OpenAI(max_tokens=1024)
     prompt = load_prompt(prompt_fn)
@@ -116,9 +119,89 @@ def load_update_wiki_section_chain(
     llm=None,
     prompt_fn=DEFAULT_ROOT_DIR + "prompts/update_wiki_section_prompt.json"
 ):
+    """
+    section, info -> text
+    """
     if llm is None:
         llm = OpenAI(max_tokens=1024)
     prompt = load_prompt(prompt_fn)
     chain = LLMChain(prompt=prompt, llm=llm)
+
+    return chain
+
+def load_entity_extraction_chain(
+    llm=None,
+    prompt_fn=DEFAULT_ROOT_DIR + "prompts/entity_extraction_prompt.json"
+):
+    """
+    chunk -> entities
+    """
+    if llm is None:
+        llm = OpenAI(max_tokens=1024)
+    prompt = load_prompt(prompt_fn)
+    chain = LLMChain(prompt=prompt, llm=llm)
+
+    def func_parse(inputs):
+        text = inputs["text"]
+        return {"entities": [ent.strip() for ent in text.split(",")]}
+    parse_chain = TransformChain(transform=func_parse, input_variables=["text"], output_variables=["entities"])
+
+    chain = SequentialChain(
+        chains=[chain, parse_chain],
+        input_variables=chain.input_keys,
+        output_variables=parse_chain.output_keys
+    )
+
+    return chain
+
+def load_split_wiki_section_chain(
+    llm=None,
+    prompt_fn=DEFAULT_ROOT_DIR + "prompts/split_wiki_section_prompt.json",
+    verbose=False,
+):
+    """
+    entity, index, info -> sections
+    """
+    if llm is None:
+        llm = OpenAI(max_tokens=1024)
+    prompt = load_prompt(prompt_fn)
+    chain = LLMChain(prompt=prompt, llm=llm, verbose=verbose)
+
+    def func_parse(inputs):
+        text = inputs["text"]
+        if verbose:
+            print("Intermediate text in split_wiki_section_chain:")
+            print(text)
+        parts = {}
+        titles = {}
+        for line in text.split("\n"):
+            m = re.search(r"Title (?P<idx>[0-9]+): (?P<names>.+)", line)
+            if m is not None:
+                idx = m.group("idx")
+                names = m.group("names")
+                titles[idx] = names
+            
+                continue
+
+            m = re.search(r"Part (?P<idx>[0-9]+): (?P<content>.+)", line)
+            if m is not None:
+                idx = m.group("idx")
+                content = m.group("content")
+
+                parts[idx] = content
+        
+        outputs = []
+        for idx in parts.keys() & titles.keys():
+            outputs.append((titles[idx], parts[idx]))
+        
+        return {"sections": outputs}
+
+    parse_chain = TransformChain(transform=func_parse, input_variables=["text"], output_variables=["sections"])
+
+    chain = SequentialChain(
+        chains=[chain, parse_chain],
+        input_variables=chain.input_keys,
+        output_variables=["sections"]
+    )
 
     return chain
